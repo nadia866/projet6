@@ -22,7 +22,7 @@ async function connect(e) {
       console.log(response);
       let responseString = JSON.stringify(response);
       localStorage.setItem("authentification", responseString);
-      window.document.location.href = "../pageAdministrateur/admin.html";
+      window.document.location.href = "./index.html";
     } else {
       messageForm.classList.add("active");
       messageForm.innerText = "Email ou mot de passe incorrect";
