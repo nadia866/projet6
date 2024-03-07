@@ -1,15 +1,15 @@
-// Selection de la section qui contient tous les travaux
+// Sélection de la section qui contient tous les travaux
 let galleryWork = document.querySelector(".gallery");
 
 let works = [];
-//Allez rechercher les travaux depuis l'API
 
+// Récupération des travaux depuis l'API
 let appel = await fetch("http://localhost:5678/api/works");
 let response = await appel.json();
 works = await response;
 console.log(works);
 
-//Fonction qui génère l'affichage de la gallerie
+// Fonction qui génère l'affichage de la galerie
 function displayWorks(filtreCategorie) {
   for (let i = 0; i < filtreCategorie.length; i++) {
     let newFigure = document.createElement("figure");
@@ -23,15 +23,18 @@ function displayWorks(filtreCategorie) {
     galleryWork.append(newFigure);
   }
 }
-//Appel par défaut qui permet au chargement de la page d'afficher tous les travaux
+
+// Appel par défaut qui permet, lors du chargement de la page, d'afficher tous les travaux
 displayWorks(works);
-//Retire le token d'identification du localStorage lorsqu'on se déconnecte
+
+// Retire le token d'identification du localStorage lorsqu'on se déconnecte
 let logout = document.querySelector("#logout");
 logout.addEventListener("click", localRemove);
 function localRemove() {
   localStorage.removeItem("authentification");
 }
-//Création du comportement de la modale
+
+// Création du comportement de la modale
 let modalRemove = document.querySelectorAll(".modale-remove");
 let buttonModal = document.querySelector("#edit-gallery");
 let modal = document.querySelector("#modale-container");
@@ -44,15 +47,18 @@ modalRemove.forEach((remove) =>
     modal.classList.remove("active");
   })
 );
-//Ferme la modale avec la touche echap
+
+// Ferme la modale avec la touche "Escape"
 window.document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
     modal.classList.remove("active");
   }
 });
-//Recupère la liste de la modale
+
+// Récupère la liste de la modale
 let listPicturesModal = document.querySelector("#list-works");
-//Fonction qui permet d'afficher les images dans la div de la modale
+
+// Fonction qui permet d'afficher les images dans la div de la modale
 function displayPictures() {
   for (let i = 0; i < works.length; i++) {
     let newDiv = document.createElement("div");
@@ -63,7 +69,7 @@ function displayPictures() {
     newImg.setAttribute("class", "imgWorks");
     newImg.src = `${works[i].imageUrl}`;
     let newPara = document.createElement("p");
-   // newPara.innerText = "éditer";
+    // newPara.innerText = "éditer";
     newPara.style.color = "black";
     newDiv.append(newImg);
     newDiv.append(newPara);
@@ -72,7 +78,7 @@ function displayPictures() {
 }
 displayPictures();
 
-//Fonction qui permet d'afficher les icones en position absolute
+// Fonction qui permet d'afficher les icônes en position absolue
 function displayIcon() {
   let divImgAll = document.querySelectorAll(".imgContainer");
   for (let i = 0; i < divImgAll.length; i++) {
@@ -83,23 +89,10 @@ function displayIcon() {
     trash.classList.add("trashStyle");
     divImgAll[i].append(trash);
   }
-  // for (let i = 0; i < divImgAll.length; i++) {
-  //   let move;
-  //   divImgAll[i].addEventListener("mouseenter", function () {
-  //     divImgAll[i].style.position = "relative";
-  //     move = document.createElement("div");
-  //     move.innerHTML = `<i class="fa-solid fa-arrows-up-down-left-right"></i>`;
-  //     move.classList.add("moveStyle");
-  //     divImgAll[i].append(move);
-  //   });
-  //   divImgAll[i].addEventListener("mouseleave", function () {
-  //     move.style.display = "none";
-  //   });
-  // }
 }
 displayIcon();
 
-//Recuperation de la fleche precedente pour la navigation dans la modale
+// Récupération de la flèche précédente pour la navigation dans la modale
 let arrowBack = document.querySelector("#back");
 let modalContainer = document.querySelector("#modale-content-container");
 let modal1 = document.querySelector("#modale-content");
@@ -116,12 +109,12 @@ addWork.addEventListener("click", function () {
   modal2.classList.add("visible");
 });
 
-//Function qui permet de supprimer un travail (DELETE)
+// Fonction qui permet de supprimer un travail (DELETE)
 let imgGalleryAll = document.querySelectorAll(".gallery figure");
 let imgModalAll = document.querySelectorAll(".imgContainer");
 let trashAll = document.querySelectorAll(".trashStyle");
 for (let i = 0; i < trashAll.length; i++) {
-  trashAll[i].addEventListener("click", function (e) {
+  trashAll[i].addEventListener("click", async function (e) {
     e.preventDefault();
     let trashId = this.getAttribute("id");
 
@@ -136,21 +129,20 @@ for (let i = 0; i < trashAll.length; i++) {
       },
     };
     fetch(`http://localhost:5678/api/works/${trashId}`, optionsDelete)
-      .then(document.querySelector(`#imageGallery${trashId}`).remove())
-      .then(document.querySelector(`#imageModal${trashId}`).remove());
+      .then(() => document.querySelector(`#imageGallery${trashId}`).remove())
+      .then(() => document.querySelector(`#imageModal${trashId}`).remove());
   });
 }
 
-//Fonction qui permet d'ajouter un travail (POST)
-//Selection du formulaire via le DOM
+// Fonction qui permet d'ajouter un travail (POST)
+// Sélection du formulaire via le DOM
 let formPostWork = document.querySelector("#addWorkForm");
 let buttonValidation = document.querySelector("#validation");
 let inputFile = document.querySelector("#file");
 let inputTitle = document.querySelector("#title");
 let inputCategory = document.querySelector("#category");
 
-//Condition bouton vert
-
+// Condition du bouton vert
 window.addEventListener("load", function () {
   inputFile.value = "";
   inputTitle.value = "";
@@ -174,7 +166,7 @@ let fileContainerLabel = document.querySelector("#fileContainer label");
 let imgUploadText = document.querySelector("#imgUploadText");
 let errorText = document.querySelector("#errorText");
 
-//Ecoute de l'envois du formulaire
+// Écoute de l'envoi du formulaire
 formPostWork.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -207,7 +199,7 @@ formPostWork.addEventListener("submit", async function (e) {
   ) {
     let postWorks = await fetch("http://localhost:5678/api/works", optionsPost);
 
-    //Second appel à l'api lors de la soumission du formulaire
+    // Second appel à l'API lors de la soumission du formulaire
     let appelApi = await fetch("http://localhost:5678/api/works");
     let responseAPI = await appelApi.json();
     works = await responseAPI;
@@ -219,7 +211,7 @@ formPostWork.addEventListener("submit", async function (e) {
     );
     addWorkModal(works[works.length - 1].imageUrl, works[works.length - 1].id);
     console.log(trashAll);
-    //Supprimer de la modale et de la gallery et de l'api un projet ajouté au clic sur la corbeille
+    // Supprimer de la modale, de la galerie et de l'API un projet ajouté au clic sur la corbeille
     let trashWorksAdd = document.querySelectorAll(".trashStyle");
     trashWorksAdd.forEach((trashSingle) =>
       trashSingle.addEventListener("click", async function () {
@@ -234,18 +226,18 @@ formPostWork.addEventListener("submit", async function (e) {
           },
         };
         fetch(`http://localhost:5678/api/works/${this.id}`, optionsDelete)
-          .then(document.querySelector(`#imageModal${this.id}`).remove())
-          .then(document.querySelector(`#imageGallery${this.id}`).remove());
+          .then(() => document.querySelector(`#imageModal${this.id}`).remove())
+          .then(() => document.querySelector(`#imageGallery${this.id}`).remove());
       })
     );
 
     if (postWorks) {
       modal2.classList.remove("visible");
       modal1.classList.add("visible");
-      //Le bouton de validation redevient gris
+      // Le bouton de validation redevient gris
       buttonValidation.style.backgroundColor = null;
       buttonValidation.innerText = "Valider";
-      //Le inputFile se vide et redevient normal sans l'image de previsualisation
+      // Le inputFile se vide et redevient normal sans l'image de prévisualisation
       // avec les labels et les messages affichés
       inputFile.value = "";
       inputTitle.value = "";
@@ -259,7 +251,7 @@ formPostWork.addEventListener("submit", async function (e) {
       fileContainer.style.height = "";
       errorText.classList.remove("activeText");
     } else {
-      console.log("Echec du status");
+      console.log("Échec du statut");
     }
   } else {
     if (inputTitle.value == "") {
@@ -270,7 +262,7 @@ formPostWork.addEventListener("submit", async function (e) {
   }
 });
 
-//Erreur titre disparait
+// Erreur titre disparaît
 inputTitle.addEventListener("input", function () {
   if (inputTitle.value != "") {
     errorText.classList.remove("activeText");
@@ -304,12 +296,12 @@ inputFile.addEventListener("change", function () {
     fileReader.readAsDataURL(imgUpload);
   } else {
     imgUploadText.style.color = "red";
-    imgUploadText.innerText = `Image 4Mo max / Format acceptés: Jpeg, Png`;
+    imgUploadText.innerText = `Image 4Mo max / Formats acceptés: JPEG, PNG`;
     inputFile.value = "";
   }
 });
 
-//Ajouter la photo à la gallery
+// Ajouter la photo à la galerie
 function addWorkGallery(url, text, id) {
   let newFigure = document.createElement("figure");
   newFigure.setAttribute("id", `imageGallery${id}`);
@@ -321,7 +313,7 @@ function addWorkGallery(url, text, id) {
   galleryWork.append(newFigure);
 }
 
-//Ajouter la photo à la modale
+// Ajouter la photo à la modale
 function addWorkModal(url, id) {
   let newDiv = document.createElement("div");
   newDiv.style.width = "18%";
@@ -337,20 +329,20 @@ function addWorkModal(url, id) {
   newDiv.append(newPara);
   listPicturesModal.append(newDiv);
 
-  //Creation des icones en position absolute
+  // Création des icônes en position absolue
   newDiv.style.position = "relative";
   let trash = document.createElement("div");
   trash.setAttribute("id", `${id}`);
   trash.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
   trash.classList.add("trashStyle");
   newDiv.append(trash);
-  //Le bouton move
+  // Le bouton move
   let move;
   newDiv.addEventListener("mouseenter", function () {
     newDiv.style.position = "relative";
     move = document.createElement("div");
     move.innerHTML = `<i class="fa-solid fa-arrows-up-down-left-right"></i>`;
-    //Ajouter les boutons move et delete
+    // Ajouter les boutons move et delete
     move.classList.add("moveStyle");
     newDiv.append(move);
   });
